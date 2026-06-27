@@ -12,9 +12,8 @@ import (
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
+	if err := godotenv.Load(); err != nil {
+		log.Print("не найден, использую переменную окружения из docker.")
 	}
 
 	db, err := repository.NewPostgresDB()
@@ -22,14 +21,17 @@ func main() {
 		log.Fatal("Ошибка подключения к бд", err)
 	}
 	storage := repository.NewRoomPostgres(db)
-	roomService := service.NewRoomImplementation(storage)
+	userRepo := repository.NewUserPostgres(db)
 
-	roomHandler := handler.NewRoomHandler(roomService)
+	roomService := service.NewRoomImplementation(storage)
+	authService := service.NewAuthService(userRepo)
+
+	roomHandler := handler.NewRoomHandler(roomService, authService)
 
 	router := roomHandler.InitRoutes()
 
 	server := http.Server{
-		Addr:    ":5588",
+		Addr:    ":5050",
 		Handler: router,
 	}
 

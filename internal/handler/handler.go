@@ -1,17 +1,20 @@
 package handler
 
 import (
+	"github.com/Coldwws/306/internal/auth"
 	"github.com/Coldwws/306/internal/service"
 	"github.com/gin-gonic/gin"
 )
 
 type Handler struct {
 	service service.RoomService
+	auth    service.AuthService
 }
 
-func NewRoomHandler(service service.RoomService) *Handler {
+func NewRoomHandler(service service.RoomService, auth service.AuthService) *Handler {
 	return &Handler{
 		service: service,
+		auth:    auth,
 	}
 }
 
@@ -21,7 +24,14 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
 
+	authRoutes := router.Group("/auth")
+	{
+		authRoutes.POST("/login", h.login)
+		authRoutes.POST("/register", h.register)
+	}
+
 	room := router.Group("/room")
+	room.Use(auth.AuthRequired())
 	{
 		room.GET("/", h.GetAllRooms)
 		room.GET("/:id", h.GetRoomById)

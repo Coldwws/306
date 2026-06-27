@@ -13,3 +13,9 @@ type UpdateRoom struct {
 	Type        *string `json:"type"`
 	Description *string `json:"description"`
 }
+
+type User struct {
+	ID           int    `db:"id"`
+	Username     string `db:"username"`
+	PasswordHash string `db:"password_hash"`
+}

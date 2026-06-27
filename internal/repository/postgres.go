@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/jmoiron/sqlx"
-	_ "github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 

@@ -9,3 +9,8 @@ type RoomService interface {
 	DeleteRoom(id int) (int, error)
 	UpdateRoom(id int, updateRoom models.UpdateRoom) error
 }
+
+type AuthService interface {
+	Login(username, password string) (string, error)
+	Register(username, password string) error
+}
